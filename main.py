@@ -2,7 +2,15 @@ from datetime import date, datetime
 
 
 def get_birthdays_per_week(users):
-    # Реалізуйте тут домашнє завдання
+    in_users = users
+    users = {}
+    if len(in_users) == 0:
+        return {}
+    
+    for user in in_users:
+        if user["birthday"] < datetime.now().date():
+            continue
+
     return users
 
 
