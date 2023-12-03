@@ -1,17 +1,32 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+from collections import defaultdict
 
 
 def get_birthdays_per_week(users):
+    DATE_NOW = date.today()
+    
     in_users = users
-    users = {}
+    users = defaultdict(list)
+    target_days = defaultdict(list)
+    
     if len(in_users) == 0:
         return {}
     
+    for i in range(0, 7):
+        target_date = DATE_NOW + timedelta(i)
+        target_days[target_date.month].append(target_date.day)
+    
     for user in in_users:
-        if user["birthday"] < datetime.now().date():
-            continue
+        data_birthday = user["birthday"] if user["birthday"] >= DATE_NOW else user["birthday"].replace(year=DATE_NOW.year + 1)
+        
+        if data_birthday.weekday() in [5, 6]:
+            data_birthday = data_birthday + timedelta(7 - data_birthday.weekday())
 
-    return users
+        if data_birthday.month in target_days:
+            if data_birthday.day in target_days[data_birthday.month]:
+                users[data_birthday.strftime("%A")].append(user["name"])
+
+    return dict(users)
 
 
 if __name__ == "__main__":
